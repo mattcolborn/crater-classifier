@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "crater-classifier"
+version = "0.1.0"
+description = "Binary CNN image classifier for cratered vs non-cratered terrain"
+authors = ["Matt Colborn"]
+packages = [{ include = "*", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+torch = "*"
+torchvision = "*"
+matplotlib = "*"
+pillow = "*"
+jupyter = "*"
+ipykernel = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

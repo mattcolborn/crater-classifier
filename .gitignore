@@ -1,31 +1,31 @@
-# Data — too large for GitHub
+# ── Data — too large for GitHub ────────────────────────────────────────────────
 data/
 
-# Model weights
+# ── Model weights ──────────────────────────────────────────────────────────────
 output/*.pth
 
-# Python
+# ── Python ─────────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *.egg-info/
 dist/
 build/
 
-# Virtual environment
+# ── Virtual environment (pyenv/venv) ───────────────────────────────────────────
 .venv/
 venv/
 .python-version
 
-# Jupyter
+# ── Jupyter ────────────────────────────────────────────────────────────────────
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
-# PyCharm
+# ── PyCharm ────────────────────────────────────────────────────────────────────
 .idea/
 
-# macOS
+# ── macOS ──────────────────────────────────────────────────────────────────────
 .DS_Store
 
-# Anaconda
+# ── Anaconda (legacy) ──────────────────────────────────────────────────────────
 .conda/
 *.conda
