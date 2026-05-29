@@ -1,0 +1,15 @@
+README.md
+setup.py
+src/crater_classifier/__init__.py
+src/crater_classifier/config.py
+src/crater_classifier/data.py
+src/crater_classifier/evaluate.py
+src/crater_classifier/model.py
+src/crater_classifier/predict.py
+src/crater_classifier/train.py
+src/crater_classifier/utils.py
+src/crater_classifier.egg-info/PKG-INFO
+src/crater_classifier.egg-info/SOURCES.txt
+src/crater_classifier.egg-info/dependency_links.txt
+src/crater_classifier.egg-info/requires.txt
+src/crater_classifier.egg-info/top_level.txt
