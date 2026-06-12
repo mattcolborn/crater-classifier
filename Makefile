@@ -1,4 +1,4 @@
-.PHONY: install activate train evaluate clean help lint format typecheck sort check-all
+.PHONY: install train evaluate clean help lint format typecheck sort check-all
 
 help:
 	@echo "Available commands:"
@@ -6,7 +6,7 @@ help:
 	@echo "  make train      - Run the training script"
 	@echo "  make evaluate   - Run the evaluation script"
 	@echo "  make clean      - Remove cached Python files"
-	@echo "  make lint       - Check code with flake8"
+	@echo "  make lint       - Check code with ruff"
 	@echo "  make format     - Auto-format code with black"
 	@echo "  make typecheck  - Check types with mypy"
 	@echo "  make sort       - Sort imports with isort"
@@ -27,7 +27,7 @@ clean:
 	find . -type d -name ".pytest_cache" -exec rm -rf {} +
 
 lint:
-	poetry run flake8 src/
+	poetry run ruff check src/
 
 format:
 	poetry run black src/
@@ -41,5 +41,5 @@ sort:
 check-all:
 	poetry run isort src/
 	poetry run black src/
-	poetry run flake8 src/
+	poetry run ruff check src/
 	poetry run mypy src/
