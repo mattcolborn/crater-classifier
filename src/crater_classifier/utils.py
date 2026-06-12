@@ -4,14 +4,20 @@ Utility functions for saving and loading the model.
 """
 
 import os
+
 import torch
 
 from . import config
 
 
-def save_model(model, dataset, test_acc, val_acc,
-               output_dir=config.OUTPUT_DIR,
-               model_name=config.MODEL_NAME):
+def save_model(
+    model,
+    dataset,
+    test_acc,
+    val_acc,
+    output_dir=config.OUTPUT_DIR,
+    model_name=config.MODEL_NAME,
+):
     """
     Saves model weights and metadata to disk.
 
@@ -26,13 +32,16 @@ def save_model(model, dataset, test_acc, val_acc,
     os.makedirs(output_dir, exist_ok=True)
     model_path = os.path.join(output_dir, model_name)
 
-    torch.save({
-        "model_state_dict": model.state_dict(),
-        "class_to_idx":     dataset.class_to_idx,
-        "image_size":       config.IMAGE_SIZE,
-        "val_acc":          val_acc,
-        "test_acc":         test_acc,
-    }, model_path)
+    torch.save(
+        {
+            "model_state_dict": model.state_dict(),
+            "class_to_idx": dataset.class_to_idx,
+            "image_size": config.IMAGE_SIZE,
+            "val_acc": val_acc,
+            "test_acc": test_acc,
+        },
+        model_path,
+    )
 
     print(f"Model saved to: {model_path}")
     return model_path

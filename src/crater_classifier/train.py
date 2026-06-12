@@ -4,6 +4,7 @@ Training loop, evaluation, and two-stage fine-tuning logic.
 """
 
 import copy
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -27,14 +28,14 @@ def train_one_epoch(model, loader, optimiser, criterion):
 
         optimiser.zero_grad()
         outputs = model(images)
-        loss    = criterion(outputs, labels)
+        loss = criterion(outputs, labels)
         loss.backward()
         optimiser.step()
 
         running_loss += loss.item() * images.size(0)
-        _, predicted  = torch.max(outputs, 1)
-        correct      += (predicted == labels).sum().item()
-        total        += labels.size(0)
+        _, predicted = torch.max(outputs, 1)
+        correct += (predicted == labels).sum().item()
+        total += labels.size(0)
 
     return running_loss / total, correct / total
 
@@ -52,13 +53,13 @@ def evaluate(model, loader, criterion):
     with torch.no_grad():
         for images, labels in loader:
             images, labels = images.to(config.DEVICE), labels.to(config.DEVICE)
-            outputs        = model(images)
-            loss           = criterion(outputs, labels)
+            outputs = model(images)
+            loss = criterion(outputs, labels)
 
             running_loss += loss.item() * images.size(0)
-            _, predicted  = torch.max(outputs, 1)
-            correct      += (predicted == labels).sum().item()
-            total        += labels.size(0)
+            _, predicted = torch.max(outputs, 1)
+            correct += (predicted == labels).sum().item()
+            total += labels.size(0)
 
     return running_loss / total, correct / total
 
@@ -75,19 +76,15 @@ def train(model, train_loader, val_loader):
     """
     criterion = nn.CrossEntropyLoss()
     optimiser = optim.Adam(
-        filter(lambda p: p.requires_grad, model.parameters()),
-        lr=config.LEARNING_RATE
+        filter(lambda p: p.requires_grad, model.parameters()), lr=config.LEARNING_RATE
     )
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-        optimiser, mode='min', patience=3, factor=0.5
+        optimiser, mode="min", patience=3, factor=0.5
     )
 
-    history = {
-        "train_loss": [], "val_loss": [],
-        "train_acc":  [], "val_acc":  []
-    }
+    history = {"train_loss": [], "val_loss": [], "train_acc": [], "val_acc": []}
 
-    best_val_acc   = 0.0
+    best_val_acc = 0.0
     best_model_wts = copy.deepcopy(model.state_dict())
 
     print("\n" + "=" * 60)
@@ -106,12 +103,14 @@ def train(model, train_loader, val_loader):
                     param.requires_grad = True
             optimiser = optim.Adam(
                 filter(lambda p: p.requires_grad, model.parameters()),
-                lr=config.FINE_TUNE_LR
+                lr=config.FINE_TUNE_LR,
             )
 
         # ── Forward pass ──────────────────────────────────────────────────────
-        train_loss, train_acc = train_one_epoch(model, train_loader, optimiser, criterion)
-        val_loss,   val_acc   = evaluate(model, val_loader, criterion)
+        train_loss, train_acc = train_one_epoch(
+            model, train_loader, optimiser, criterion
+        )
+        val_loss, val_acc = evaluate(model, val_loader, criterion)
 
         scheduler.step(val_loss)
 
@@ -122,16 +121,15 @@ def train(model, train_loader, val_loader):
 
         # ── Save best weights ─────────────────────────────────────────────────
         if val_acc > best_val_acc:
-            best_val_acc   = val_acc
+            best_val_acc = val_acc
             best_model_wts = copy.deepcopy(model.state_dict())
 
-        current_lr = optimiser.param_groups[0]['lr']
+        current_lr = optimiser.param_groups[0]["lr"]
         print(
             f"Epoch [{epoch+1:2d}/{config.NUM_EPOCHS}]  "
             f"Train Loss: {train_loss:.4f}  Train Acc: {train_acc:.3f}  |  "
             f"Val Loss: {val_loss:.4f}  Val Acc: {val_acc:.3f}  |  "
-            f"LR: {current_lr:.6f}"
-            + (" ← best" if val_acc == best_val_acc else "")
+            f"LR: {current_lr:.6f}" + (" ← best" if val_acc == best_val_acc else "")
         )
 
     model.load_state_dict(best_model_wts)

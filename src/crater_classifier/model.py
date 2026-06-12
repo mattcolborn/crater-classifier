@@ -30,18 +30,18 @@ def build_model(num_classes=2):
         param.requires_grad = False
 
     # Replace the final fully connected layer
-    num_features = model.fc.in_features   # 512 for ResNet18
+    num_features = model.fc.in_features  # 512 for ResNet18
     model.fc = nn.Sequential(
         nn.Linear(num_features, 256),
         nn.ReLU(),
         nn.Dropout(0.4),
-        nn.Linear(256, num_classes)
+        nn.Linear(256, num_classes),
     )
 
     model = model.to(config.DEVICE)
 
     # Report parameter counts
-    trainable   = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     total_params = sum(p.numel() for p in model.parameters())
     print(f"Trainable parameters: {trainable:,} / {total_params:,}")
 

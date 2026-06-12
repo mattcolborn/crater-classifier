@@ -4,11 +4,12 @@ Test set evaluation and training curve plotting.
 """
 
 import os
-import torch.nn as nn
-import matplotlib.pyplot as plt
 
-from .train import evaluate as _evaluate
+import matplotlib.pyplot as plt
+import torch.nn as nn
+
 from . import config
+from .train import evaluate as _evaluate
 
 
 def evaluate_test_set(model, test_loader):
@@ -34,17 +35,16 @@ def plot_history(history, output_dir=config.OUTPUT_DIR):
     """
     os.makedirs(output_dir, exist_ok=True)
 
-    num_epochs   = len(history["train_loss"])
+    num_epochs = len(history["train_loss"])
     epochs_range = range(1, num_epochs + 1)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
 
     # Loss plot
     ax1.plot(epochs_range, history["train_loss"], label="Train Loss")
-    ax1.plot(epochs_range, history["val_loss"],   label="Val Loss")
+    ax1.plot(epochs_range, history["val_loss"], label="Val Loss")
     ax1.axvline(
-        x=config.UNFREEZE_EPOCH,
-        color="grey", linestyle="--", label="Fine-tune start"
+        x=config.UNFREEZE_EPOCH, color="grey", linestyle="--", label="Fine-tune start"
     )
     ax1.set_title("Loss")
     ax1.set_xlabel("Epoch")
@@ -52,10 +52,9 @@ def plot_history(history, output_dir=config.OUTPUT_DIR):
 
     # Accuracy plot
     ax2.plot(epochs_range, history["train_acc"], label="Train Accuracy")
-    ax2.plot(epochs_range, history["val_acc"],   label="Val Accuracy")
+    ax2.plot(epochs_range, history["val_acc"], label="Val Accuracy")
     ax2.axvline(
-        x=config.UNFREEZE_EPOCH,
-        color="grey", linestyle="--", label="Fine-tune start"
+        x=config.UNFREEZE_EPOCH, color="grey", linestyle="--", label="Fine-tune start"
     )
     ax2.set_title("Accuracy")
     ax2.set_xlabel("Epoch")
