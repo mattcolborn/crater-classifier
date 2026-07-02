@@ -12,7 +12,7 @@ from torchvision import datasets, transforms
 from . import config
 
 
-def get_transforms():
+def get_transforms() -> tuple[transforms.Compose, transforms.Compose]:
     """
     Returns training and validation/test transforms.
 
@@ -30,7 +30,6 @@ def get_transforms():
             transforms.Normalize(mean=config.IMAGENET_MEAN, std=config.IMAGENET_STD),
         ]
     )
-
     val_test_transform = transforms.Compose(
         [
             transforms.Resize((config.IMAGE_SIZE, config.IMAGE_SIZE)),
@@ -38,11 +37,12 @@ def get_transforms():
             transforms.Normalize(mean=config.IMAGENET_MEAN, std=config.IMAGENET_STD),
         ]
     )
-
     return train_transform, val_test_transform
 
 
-def load_data(data_dir=config.DATA_DIR):
+def load_data(
+    data_dir: str = config.DATA_DIR,
+) -> tuple[DataLoader, DataLoader, DataLoader, datasets.ImageFolder]:
     """
     Loads images from data_dir using ImageFolder, splits into
     train/val/test sets, and returns DataLoaders.
@@ -59,7 +59,6 @@ def load_data(data_dir=config.DATA_DIR):
 
     # Load full dataset with training transforms
     full_dataset = datasets.ImageFolder(root=data_dir, transform=train_transform)
-
     print(f"Classes found:          {full_dataset.classes}")
     print(f"Class → index mapping:  {full_dataset.class_to_idx}")
     print(f"Total images:           {len(full_dataset)}")
@@ -79,8 +78,8 @@ def load_data(data_dir=config.DATA_DIR):
     # Override transforms for val and test — no augmentation
     val_set.dataset = copy.deepcopy(full_dataset)
     test_set.dataset = copy.deepcopy(full_dataset)
-    val_set.dataset.transform = val_test_transform
-    test_set.dataset.transform = val_test_transform
+    val_set.dataset.transform = val_test_transform  # type: ignore[attr-defined]
+    test_set.dataset.transform = val_test_transform  # type: ignore[attr-defined]
 
     print(f"\nSplit: {train_size} train / {val_size} val / {test_size} test")
 

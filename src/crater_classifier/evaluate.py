@@ -7,12 +7,16 @@ import os
 
 import matplotlib.pyplot as plt
 import torch.nn as nn
+from torch.utils.data import DataLoader
 
 from . import config
 from .train import evaluate as _evaluate
 
 
-def evaluate_test_set(model, test_loader):
+def evaluate_test_set(
+    model: nn.Module,
+    test_loader: DataLoader,
+) -> tuple[float, float]:
     """
     Runs the model on the held-out test set and prints results.
 
@@ -25,7 +29,10 @@ def evaluate_test_set(model, test_loader):
     return test_loss, test_acc
 
 
-def plot_history(history, output_dir=config.OUTPUT_DIR):
+def plot_history(
+    history: dict[str, list[float]],
+    output_dir: str = config.OUTPUT_DIR,
+) -> None:
     """
     Plots and saves training/validation loss and accuracy curves.
 
@@ -34,7 +41,6 @@ def plot_history(history, output_dir=config.OUTPUT_DIR):
         output_dir: folder to save the plot image
     """
     os.makedirs(output_dir, exist_ok=True)
-
     num_epochs = len(history["train_loss"])
     epochs_range = range(1, num_epochs + 1)
 

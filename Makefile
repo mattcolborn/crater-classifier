@@ -33,7 +33,7 @@ format:
 	poetry run black src/
 
 typecheck:
-	poetry run mypy src/
+	poetry run mypy src/ main.py
 
 sort:
 	poetry run isort src/
