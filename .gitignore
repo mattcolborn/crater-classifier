@@ -29,3 +29,6 @@ venv/
 # ── Anaconda (legacy) ──────────────────────────────────────────────────────────
 .conda/
 *.conda
+# ── Type checker / linter caches ───────────────────────────────────────────────
+.mypy_cache/
+.ruff_cache/

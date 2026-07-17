@@ -6,13 +6,18 @@ Run inference on a single image using a trained model.
 import os
 
 import torch
+import torch.nn as nn
 from PIL import Image
 
 from . import config
 from .data import get_transforms
 
 
-def predict_image(image_path, model, class_to_idx):
+def predict_image(
+    image_path: str,
+    model: nn.Module,
+    class_to_idx: dict[str, int],
+) -> tuple[str, float]:
     """
     Predicts whether a single image contains a crater or not.
 
@@ -35,7 +40,7 @@ def predict_image(image_path, model, class_to_idx):
     with torch.no_grad():
         output = model(tensor)
         probabilities = torch.softmax(output, dim=1)[0]
-        predicted_idx = torch.argmax(probabilities).item()
+        predicted_idx = int(torch.argmax(probabilities).item())
 
     predicted_class = idx_to_class[predicted_idx]
     confidence = probabilities[predicted_idx].item()
@@ -43,6 +48,7 @@ def predict_image(image_path, model, class_to_idx):
     print(f"\nImage:      {os.path.basename(image_path)}")
     print(f"Prediction: {predicted_class}")
     print(f"Confidence: {confidence:.1%}")
+
     for idx, class_name in idx_to_class.items():
         print(f"  {class_name}: {probabilities[idx].item():.1%}")
 

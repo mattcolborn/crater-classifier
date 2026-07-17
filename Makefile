@@ -1,4 +1,4 @@
-.PHONY: install train evaluate clean help lint format typecheck sort check-all
+.PHONY: install train evaluate clean help lint format typecheck sort check-all dashboard
 
 help:
 	@echo "Available commands:"
@@ -33,7 +33,7 @@ format:
 	poetry run black src/
 
 typecheck:
-	poetry run mypy src/
+	poetry run mypy src/ main.py
 
 sort:
 	poetry run isort src/
@@ -43,3 +43,6 @@ check-all:
 	poetry run black src/
 	poetry run ruff check src/
 	poetry run mypy src/
+
+dashboard:
+	poetry run streamlit run app.py

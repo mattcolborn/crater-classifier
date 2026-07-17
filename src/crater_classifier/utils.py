@@ -4,20 +4,23 @@ Utility functions for saving and loading the model.
 """
 
 import os
+from typing import Any
 
 import torch
+from torch import nn
+from torchvision.datasets import ImageFolder
 
 from . import config
 
 
 def save_model(
-    model,
-    dataset,
-    test_acc,
-    val_acc,
-    output_dir=config.OUTPUT_DIR,
-    model_name=config.MODEL_NAME,
-):
+    model: nn.Module,
+    dataset: ImageFolder,
+    test_acc: float,
+    val_acc: float,
+    output_dir: str = config.OUTPUT_DIR,
+    model_name: str = config.MODEL_NAME,
+) -> str:
     """
     Saves model weights and metadata to disk.
 
@@ -31,7 +34,6 @@ def save_model(
     """
     os.makedirs(output_dir, exist_ok=True)
     model_path = os.path.join(output_dir, model_name)
-
     torch.save(
         {
             "model_state_dict": model.state_dict(),
@@ -42,12 +44,14 @@ def save_model(
         },
         model_path,
     )
-
     print(f"Model saved to: {model_path}")
     return model_path
 
 
-def load_model(model, model_path):
+def load_model(
+    model: nn.Module,
+    model_path: str,
+) -> tuple[nn.Module, dict[str, Any]]:
     """
     Loads saved model weights back into a model instance.
 

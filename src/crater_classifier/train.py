@@ -8,11 +8,17 @@ import copy
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.utils.data import DataLoader
 
 from . import config
 
 
-def train_one_epoch(model, loader, optimiser, criterion):
+def train_one_epoch(
+    model: nn.Module,
+    loader: DataLoader,
+    optimiser: optim.Optimizer,
+    criterion: nn.Module,
+) -> tuple[float, float]:
     """
     Runs one full pass over the training data.
 
@@ -40,7 +46,11 @@ def train_one_epoch(model, loader, optimiser, criterion):
     return running_loss / total, correct / total
 
 
-def evaluate(model, loader, criterion):
+def evaluate(
+    model: nn.Module,
+    loader: DataLoader,
+    criterion: nn.Module,
+) -> tuple[float, float]:
     """
     Evaluates the model on a val or test DataLoader without updating weights.
 
@@ -64,7 +74,11 @@ def evaluate(model, loader, criterion):
     return running_loss / total, correct / total
 
 
-def train(model, train_loader, val_loader):
+def train(
+    model: nn.Module,
+    train_loader: DataLoader,
+    val_loader: DataLoader,
+) -> tuple[nn.Module, dict[str, list[float]]]:
     """
     Full two-stage training loop:
       Stage 1 (epochs 1 to UNFREEZE_EPOCH):   train classifier head only
@@ -82,7 +96,12 @@ def train(model, train_loader, val_loader):
         optimiser, mode="min", patience=3, factor=0.5
     )
 
-    history = {"train_loss": [], "val_loss": [], "train_acc": [], "val_acc": []}
+    history: dict[str, list[float]] = {
+        "train_loss": [],
+        "val_loss": [],
+        "train_acc": [],
+        "val_acc": [],
+    }
 
     best_val_acc = 0.0
     best_model_wts = copy.deepcopy(model.state_dict())
