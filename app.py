@@ -10,9 +10,11 @@ import sys
 # Allow imports from src/ (same trick as main.py)
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
+import pandas as pd
 import torch
 import streamlit as st
 from PIL import Image
+from supabase import create_client
 
 from crater_classifier import config
 from crater_classifier.data import get_transforms
@@ -42,7 +44,30 @@ def get_trained_model():
     return model, checkpoint
 
 
-tab_predict, tab_metrics = st.tabs(["Predict", "Training metrics"])
+@st.cache_data(ttl=600)
+def fetch_daily_runs() -> pd.DataFrame:
+    """
+    Fetch all rows from the Supabase daily_runs table.
+
+    Cached for 10 minutes so repeated interactions don't re-query.
+    Returns an empty DataFrame if the table has no rows.
+    """
+    client = create_client(
+        st.secrets["supabase"]["url"],
+        st.secrets["supabase"]["publishable_key"],
+    )
+    response = (
+        client.table("daily_runs")
+        .select("run_date, filename, true_label, predicted_label, confidence, correct")
+        .order("run_date")
+        .execute()
+    )
+    return pd.DataFrame(response.data)
+
+
+tab_predict, tab_metrics, tab_daily = st.tabs(
+    ["Predict", "Training metrics", "Daily runs"]
+)
 
 with tab_predict:
     st.header("Predict")
@@ -104,3 +129,42 @@ with tab_metrics:
                 "No training-curves image found. "
                 "Run the pipeline to generate `training_curves.png`."
             )
+
+with tab_daily:
+    st.header("Daily inference runs")
+    st.write(
+        "Automated daily predictions on a held-out demo set, "
+        "run by GitHub Actions and logged to Supabase."
+    )
+
+    try:
+        df = fetch_daily_runs()
+    except Exception as exc:
+        st.error(f"Could not fetch daily runs: {exc}")
+        df = pd.DataFrame()
+
+    if df.empty:
+        st.info("No daily runs logged yet.")
+    else:
+        latest_date = df["run_date"].max()
+        latest = df[df["run_date"] == latest_date]
+
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Latest run", latest_date)
+        col2.metric(
+            "Latest accuracy",
+            f"{latest['correct'].mean():.0%}",
+            f"{int(latest['correct'].sum())}/{len(latest)} correct",
+        )
+        col3.metric("Total predictions logged", len(df))
+
+        st.subheader("Accuracy over time")
+        daily_acc = df.groupby("run_date")["correct"].mean()
+        st.line_chart(daily_acc, y_label="Accuracy")
+
+        st.subheader(f"Predictions from {latest_date}")
+        st.dataframe(
+            latest[["filename", "true_label", "predicted_label", "confidence", "correct"]],
+            use_container_width=True,
+            hide_index=True,
+        )
