@@ -3,7 +3,7 @@ name = "crater-classifier"
 version = "0.1.0"
 description = "Binary CNN image classifier for cratered vs non-cratered terrain"
 authors = ["Matt Colborn"]
-packages = [{ include = "*", from = "src" }]
+packages = [{ include = "crater_classifier", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -14,6 +14,8 @@ pillow = "*"
 jupyter = "*"
 ipykernel = "*"
 streamlit = "^1.58.0"
+supabase = "^2.31.0"
+pandas = "^3.0.5"
 
 [build-system]
 requires = ["poetry-core"]

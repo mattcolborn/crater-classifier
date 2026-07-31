@@ -54,6 +54,7 @@ def main() -> None:
         val_acc=max(history["val_acc"]),
     )
 
+
     # 7. Optional: predict on a single image
     # Uncomment and update path to run inference:
     # predict_image(

@@ -32,3 +32,8 @@ venv/
 # ── Type checker / linter caches ───────────────────────────────────────────────
 .mypy_cache/
 .ruff_cache/
+
+# Python bytecode
+__pycache__/
+*.pyc
+.streamlit/secrets.toml
