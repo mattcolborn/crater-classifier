@@ -26,7 +26,10 @@ st.set_page_config(page_title="Crater Classifier", page_icon="🪐", layout="wid
 st.title("🪐 Crater Classifier")
 st.write("Transfer-learning ResNet18 for classifying cratered terrain.")
 
-MODEL_PATH = os.path.join(config.OUTPUT_DIR, config.MODEL_NAME)
+# fall back to the Google Drive output path.
+MODEL_PATH = "models/crater_classifier.pth"
+if not os.path.exists(MODEL_PATH):
+    MODEL_PATH = os.path.join(config.OUTPUT_DIR, config.MODEL_NAME)
 
 
 @st.cache_resource
