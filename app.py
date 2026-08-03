@@ -124,7 +124,9 @@ with tab_metrics:
         col1.metric("Best validation accuracy", f"{checkpoint['val_acc']:.1%}")
         col2.metric("Test accuracy", f"{checkpoint['test_acc']:.1%}")
 
-        curves_path = os.path.join(config.OUTPUT_DIR, "training_curves.png")
+        curves_path = "assets/training_curves.png"
+        if not os.path.exists(curves_path):
+            curves_path = os.path.join(config.OUTPUT_DIR, "training_curves.png")
         if os.path.exists(curves_path):
             st.image(curves_path, caption="Training curves", use_container_width=True)
         else:
